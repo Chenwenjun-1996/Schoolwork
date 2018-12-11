@@ -20,4 +20,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('social_force/', include('social_force.urls')),
+    path('', sfv.drawMap),
 ]

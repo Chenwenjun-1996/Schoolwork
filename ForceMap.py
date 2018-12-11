@@ -11,9 +11,9 @@ class ForceMap:
         self.height = height
         self.distMap = bfs.BFS(graph, width, height, x, y).dist
         self.randomPos(width, height, num)
-        print(self.personMap())
-        np.set_printoptions(threshold=np.NaN)
-        print(self.distMap)
+        #print(self.personMap())
+        #np.set_printoptions(threshold=np.NaN)
+        #print(self.distMap)
         self.A = 2000
         self.B = 0.08
         self.r = 0.2
@@ -42,10 +42,10 @@ class ForceMap:
         return st
 
     def personMap(self):  # 导出行人位置图字符串
-        st = '['
+        plist = []
         for p in self.crowd:
-            st += str(p) + ','
-        return st + '],'
+            plist.append([round(p.pos[0], 5), round(p.pos[1], 5)])
+        return plist
 
     def clear(self):  # 清空上一轮计算的力
         for p in self.crowd:
@@ -107,7 +107,7 @@ class ForceMap:
                 Dij = self.crowd[i].pos - self.crowd[j].pos
                 dij = np.linalg.norm(Dij)  # 两行人间距离
                 rij = self.r * 2  # 两行人的半径之和
-                nij = Dij / dij
+                nij = Dij / (dij+0.00000001)
                 tij = np.array([-nij[1], nij[0]])
                 force = (self.A * np.exp((rij - dij) / self.B) + self.k * self.g(rij - dij)) * nij + \
                         self.K * self.g(rij - dij) * (self.crowd[j].curV - self.crowd[i].curV).dot(tij)*tij
@@ -130,22 +130,22 @@ class ForceMap:
             self.crowd[i].force(fright)
             self.crowd[i].force(fleft)
             self.crowd[i].calculate()
-        print(self.personMap())
+        #print(self.personMap())
 
 
-graph = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0,
-         0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, 0,
-         0,
-         0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0,
-         0,
-         0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, -1,
-         -1,
-         -1, -1, -1, -1, -1, -1, -1, -1, -1]
+# graph = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0,
+#          0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, 0,
+#          0,
+#          0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0,
+#          0,
+#          0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, -1,
+#          -1,
+#          -1, -1, -1, -1, -1, -1, -1, -1, -1]
 
-forceMap = ForceMap(graph, 12, 12, 10, 5, 10)
-print(forceMap.obstacleMap())
-for i in range(80):
-    forceMap.step()
+# forceMap = ForceMap(graph, 12, 12, 10, 5, 10)
+# print(forceMap.obstacleMap())
+# for i in range(80):
+#     forceMap.step()
 # p1 = person.Person(1, 1)
 # p2 = person.Person(2, 2)
 # print(p2.pos - p1.pos)

@@ -24,6 +24,7 @@ class Person:
 
     def calculate(self):
         self.curV += ((self.dir * self.desV - self.curV) / self.tao + self.fc / self.m)*self.dt
+
         v = np.linalg.norm(self.curV)
         # print(v)
         if v > self.maxV:

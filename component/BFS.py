@@ -9,8 +9,8 @@ class BFS:
         self.width = width
         self.height = height
         self.bfs = ctypes.cdll.LoadLibrary(os.path.join(os.getcwd(), 'bfs.so'))
-        self.bfs.BFS(self.data, width, height, x, y)
-        self.dist = np.array(self.data).reshape(width, height)
+        self.bfs.BFS(self.data, int(width), int(height), int(x), int(y))
+        self.dist = np.array(self.data).reshape(int(width), int(height))
 
 
 

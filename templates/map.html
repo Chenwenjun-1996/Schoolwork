@@ -11,6 +11,10 @@
         padding: 0;
         border: 0;
     }
+    div {
+        margin: 0;
+        padding: 0;
+    }
     .line {
         height: 10px;
         display: block;
@@ -36,8 +40,45 @@
         background-color: #333;
         float: left;
     }
+    .dest {
+        margin: 0;
+        padding: 0;
+        width: 9px;
+        height: 9px;
+        border: .5px #fff solid;
+        background-color: red;
+        float: left;
+    }
     #result {
         width: 90%;
+    }
+    #display {
+        margin: 0 auto;
+        position: relative;
+        width: 300px;
+        height: 300px;
+    }
+    .person {
+        width: 4px;
+        height: 4px;
+        border-radius: 2px;
+        position: absolute;
+        background-color: deepskyblue;
+        z-index: 2;
+        transition: top 0.2s, left 0.2s;
+    }
+    .dline {
+        height: 10px;
+    }
+    .dcell {
+        width: 10px;
+        height: 10px;
+        background-color: #cccccc;
+        float: left;
+        opacity: 0.8;
+    }
+    .obs {
+        background-color: #222222;
     }
     </style>
     <script src="/static/js/jquery-2.0.2.min.js"></script>
@@ -45,22 +86,32 @@
 </head>
 <body>
     <div id="map"></div>
-    <div id="result"></div>
     <hr>
     <p id="obs"></p>
     <div>
-        <label for="width">宽:</label>
+        <label for="width">地图宽:</label>
         <input type="number" value="10" id="width" class="size">
     </div>
     <div>
-        <label for="height">高:</label>
+        <label for="height">地图高:</label>
         <input type="number" value="10" id="height" class="size">
     </div>
+        <div>
+        <label for="dy">终点横坐标:</label>
+            <input type="number" value="0" id="dy" class="des">
+
+    </div>
     <div>
-        <label for="width">人数:</label>
+        <label for="dx">终点纵坐标:</label>
+        <input type="number" value="0" id="dx" class="des">
+
+    </div>
+    <div>
+        <label for="people">人数:</label>
         <input type="number" value="10" id="people">
     </div>
-    <input type="button" value="导出" id="submit">
+    <input type="button" value="导出" id="submit" >
+    <div id="display"></div>
     <script>
         window.onload = function (){
             var $width = $('#width');
@@ -68,6 +119,8 @@
             var width = 10;
             var height = 10;
             var $map = $('#map');
+            var $dis = $('#display');
+            var d;
             for(var i=0;i<width;i++) {
                 var $line = $('<div class="line"></div>');
                 for(var j=0;j<height;j++){
@@ -95,6 +148,25 @@
                     $map.append($line);
                 }
             });
+
+            $('.des').change(function () {
+
+                var x = $('#dx').val();
+                var y = $('#dy').val();
+                if(x<0||x>=width) {
+                    $('#dx').val(0);
+                }
+                if(y<0||y>=width) {
+                    $('#dy').val(0);
+                }
+                var li = $map.children().eq(x);
+                var ce = li.children().eq(y);
+                if(d!=undefined)
+                    d.removeClass('dest');
+                d = ce;
+                ce.removeClass('block').addClass('dest');
+            });
+
             // $('#submit').click(function(){
             //     var map = '[[';
             //     for (var i = 0;i<width+1;i++) {
@@ -121,42 +193,79 @@
             //     map = JSON.parse(map);
             //     console.log(map);
             // })
-            $('#submit').click(function(){
-                var map = '[';
-                for (var i = 0;i<width+1;i++) {
-                    map += '-1,'
+
+            var ori;
+            var step;
+            function anim() {
+                var i=0;
+                var fl = setInterval(function () {
+                var pos = step[i];
+                for(var j=0;j<pos.length;j++) {
+                    var person = $('#'+j);
+                    person.css('top', pos[j][0]*10-2);
+                    person.css('left', pos[j][1]*10-2);
                 }
-                map += '-1,';
+                i++;
+                if(i == step.length)
+                    clearInterval(fl);
+                }, 200);
+            }
+
+            $('#submit').click(function(){
+                var map = [];
+                for (var i = 0;i<width+2;i++) {
+                    map.push(-1);
+                }
                 $.each($map.children(), function(index, element) {
-                    map += '-1,';
+                    map.push(-1);
                     $.each($(element).children(), function(i, e){
                         if($(e).hasClass('block')) {
-                            map+='-1,'
+                            map.push(-1);
                         } else {
-                            map+='0,';
+                            map.push(0);
                         }
                     });
-                    map+='-1, ';
+                    map.push(-1);
                 });
-                for (var j = 0;j<width+1;j++) {
-                    map += '-1,'
+                for (var j = 0;j<width+2;j++) {
+                    map.push(-1);
                 }
-                map+='-1]';
-                $('#result').html(map);
-                console.log(map);
-                var data = {
-                    map: map,
-                    width: width+2,
-                    height: height+2,
-                    people: $('#people').val(),
-                };
                 $.ajax({
                     method: "POST",
                     url: '/social_force/display/',
-                    data: data,
-                    dataType: 'html',
+                    data: {
+                        'graph': JSON.stringify(map),
+                        'width': width+2,
+                        'height': height+2,
+                        'dx':  1+parseInt($('#dx').val()),
+                        'dy': 1+parseInt($('#dy').val()),
+                        'people': $('#people').val(),
+                    },
+                    dataType: 'json',
                     success: function (msg) {
+                        $dis.empty();
+                        for(var i=0;i<(height+2);i++) {
+                            var line = $('<div class="dline"></div>');
+                            for(var j=0;j<(width+2);j++){
+                                var ce = $('<div class="dcell"></div>');
+                                if(map[i*(width+2)+j]==-1)
+                                    ce.addClass('obs');
+                                line.append(ce);
+                            }
+                            $dis.append(line);
+                        }
 
+                        ori = msg.ori;
+                        step = msg.st;
+
+                        for(var k=0;k<ori.length;k++) {
+                            var person = $('<div class="person"></div>');
+                            person.attr('id', k);
+                            person.css('top', ori[k][0]*10 - 2);
+                            person.css('left', ori[k][1]*10 - 2);
+                            $dis.append(person);
+                        }
+                        anim();
                     }
                 })
             })
