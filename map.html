@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatiblte" content="ie=edge">
+    <title>map</title>
+    <style>
+    body {
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+    .line {
+        height: 10px;
+        display: block;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+    .cell {
+        margin: 0;
+        padding: 0;
+        width: 9px;
+        height: 9px;
+        border: .5px #fff solid;
+        background-color: #ccc;
+        float: left;
+    }
+    .block {
+        margin: 0;
+        padding: 0;
+        width: 9px;
+        height: 9px;
+        border: .5px #fff solid;
+        background-color: #333;
+        float: left;
+    }
+    #result {
+        width: 90%;
+    }
+    </style>
+    <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+    <script>
+        var width = 10;
+        var height = 10;
+        window.onload = function (){
+            var $map = $('#map')
+            for(var i=0;i<width;i++) {
+                var $line = $('<div class="line"></div>');
+                for(var j=0;j<height;j++){
+                    var $cell = $('<div class="cell"></div>');
+                    $line.append($cell);
+                }
+                $map.append($line);
+            };
+            $('.cell').click(function(){
+                $(this).toggleClass('block');
+                return false;
+            });
+
+            // $('#submit').click(function(){
+            //     var map = '[[';
+            //     for (var i = 0;i<width+1;i++) {
+            //         map += '1,'
+            //     }
+            //     map += '1],';
+            //     $.each($map.children(), function(index, element) {
+            //         map += '[1,';
+            //         $.each($(element).children(), function(i, e){
+            //             if($(e).hasClass('block')) {
+            //                 map+='1,'
+            //             } else {
+            //                 map+='0,';
+            //             }
+            //         });
+            //         map+='1],';
+            //     });
+            //     map += '[';
+            //     for (var j = 0;j<width+1;j++) {
+            //         map += '1,'
+            //     }
+            //     map+='1]]';
+            //     $('#result').val(map);
+            //     map = JSON.parse(map);
+            //     console.log(map);
+            // })
+            $('#submit').click(function(){
+                var map = '{';
+                for (var i = 0;i<width+1;i++) {
+                    map += '-1,'
+                }
+                map += '-1,';
+                $.each($map.children(), function(index, element) {
+                    map += '-1,';
+                    $.each($(element).children(), function(i, e){
+                        if($(e).hasClass('block')) {
+                            map+='-1,'
+                        } else {
+                            map+='0,';
+                        }
+                    });
+                    map+='-1, ';
+                });
+                for (var j = 0;j<width+1;j++) {
+                    map += '-1,'
+                }
+                map+='-1}';
+                $('#result').html(map);
+                console.log(map);
+                //map = JSON.parse(map);
+                //console.log(map);
+            })
+        }
+    </script>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="result"></div>
+    <hr>
+    <p id="obs"></p>
+    <input type="button" value="导出" id="submit">
+</body>
+</html>
