@@ -10,4 +10,6 @@ def display(request):
 
 
 def drawMap(request):
+    if request.method == 'POST':
+        pass
     return render(request, 'map.html')
