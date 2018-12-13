@@ -110,6 +110,10 @@
         <label for="people">人数:</label>
         <input type="number" value="10" id="people">
     </div>
+    <div>
+        <label for="time">仿真时间:</label>
+        <input type="number" value="120" id="time">
+    </div>
     <input type="button" value="导出" id="submit" >
     <div id="display"></div>
     <script>
@@ -129,15 +133,14 @@
                 }
                 $map.append($line);
             }
-
-            $('.cell').click(function(){
+            $map.on('click', '.cell', function () {
                 $(this).toggleClass('block');
                 return false;
             });
 
             $('.size').change(function () {
-                width = $width.val();
-                height = $height.val();
+                width = parseInt($width.val());
+                height = parseInt($height.val());
                 $map.empty();
                 for(var i=0;i<width;i++) {
                     var $line = $('<div class="line"></div>');
@@ -240,6 +243,7 @@
                         'dx':  1+parseInt($('#dx').val()),
                         'dy': 1+parseInt($('#dy').val()),
                         'people': $('#people').val(),
+                        'time': parseInt($('#time').val())
                     },
                     dataType: 'json',
                     success: function (msg) {

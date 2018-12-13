@@ -12,7 +12,8 @@ def display(request):
     if request.method == 'POST':
         data = request.POST
         #        print(type(json.loads(data.get('graph'))))
-
+        print(data.get('width'))
+        print(data.get('height'))
         force = ForceMap(json.loads(data.get('graph')), int(data.get('width')), int(data.get('height')),
                          int(data.get('dx')),
                          int(data.get('dy')), int(data.get('people')))
@@ -20,7 +21,10 @@ def display(request):
         info['ori'] = force.personMap()
         #print(force.personMap())
         info['st'] = []
-        for i in range(120):
+        time = data.get('time')
+        if time > 500:
+            time = 500
+        for i in range(time):
             force.step()
             #print(force.personMap())
             info['st'].append(force.personMap())
