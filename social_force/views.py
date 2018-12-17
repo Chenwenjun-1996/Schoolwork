@@ -21,7 +21,7 @@ def display(request):
         info['ori'] = force.personMap()
         #print(force.personMap())
         info['st'] = []
-        time = data.get('time')
+        time = int(data.get('time'))
         if time > 500:
             time = 500
         for i in range(time):

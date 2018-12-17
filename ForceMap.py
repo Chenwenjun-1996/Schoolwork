@@ -58,11 +58,11 @@ class ForceMap:
             nd = self.distMap[x, y]
             if nd - self.distMap[x - 1, y] == 1:
                 p.setDir(np.array([-1, 0]))
-            elif nd - self.distMap[x + 1, y] == 1:
+            if nd - self.distMap[x + 1, y] == 1:
                 p.setDir(np.array([1, 0]))
-            elif nd - self.distMap[x, y - 1] == 1:
+            if nd - self.distMap[x, y - 1] == 1:
                 p.setDir(np.array([0, -1]))
-            elif nd - self.distMap[x, y + 1] == 1:
+            if nd - self.distMap[x, y + 1] == 1:
                 p.setDir(np.array([0, 1]))
 
     def g(self, dis):

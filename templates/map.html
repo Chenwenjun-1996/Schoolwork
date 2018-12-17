@@ -9,14 +9,29 @@
     body {
         margin: 0;
         padding: 0;
-        border: 0;
+        border: 0;        
+        background-color: #222222;
     }
     div {
         margin: 0;
         padding: 0;
     }
+    #panel {
+        margin: 20px auto;
+        border: 2px solid;
+        border-radius: 10px;
+        width: 90%;
+        padding: 20px;
+        background-color: #fff;
+    }
+    #canv {
+        background-color: #333;
+    }
+    #map {
+        margin: 10px auto;
+    }
     .line {
-        height: 10px;
+        height: 20px;
         display: block;
         margin: 0;
         padding: 0;
@@ -25,27 +40,27 @@
     .cell {
         margin: 0;
         padding: 0;
-        width: 9px;
-        height: 9px;
-        border: .5px #fff solid;
+        width: 18px;
+        height: 18px;
+        border: 1px #fff solid;
         background-color: #ccc;
         float: left;
     }
     .block {
         margin: 0;
         padding: 0;
-        width: 9px;
-        height: 9px;
-        border: .5px #fff solid;
+        width: 18px;
+        height: 18px;
+        border: 1px #fff solid;
         background-color: #333;
         float: left;
     }
     .dest {
         margin: 0;
         padding: 0;
-        width: 9px;
-        height: 9px;
-        border: .5px #fff solid;
+        width: 18px;
+        height: 18px;
+        border: 1px #fff solid;
         background-color: red;
         float: left;
     }
@@ -59,20 +74,20 @@
         height: 300px;
     }
     .person {
-        width: 4px;
-        height: 4px;
-        border-radius: 2px;
+        width: 8px;
+        height: 8px;
+        border-radius: 4px;
         position: absolute;
         background-color: deepskyblue;
         z-index: 2;
         transition: top 0.2s, left 0.2s;
     }
     .dline {
-        height: 10px;
+        height: 20px;
     }
     .dcell {
-        width: 10px;
-        height: 10px;
+        width: 20px;
+        height: 20px;
         background-color: #cccccc;
         float: left;
         opacity: 0.8;
@@ -85,7 +100,8 @@
 
 </head>
 <body>
-    <div id="map"></div>
+    <div id="panel">
+            <div id="map"></div>
     <hr>
     <p id="obs"></p>
     <div>
@@ -115,7 +131,9 @@
         <input type="number" value="120" id="time">
     </div>
     <input type="button" value="导出" id="submit" >
-    <div id="display"></div>
+    </div>
+
+        <div id="display"></div>
     <script>
         window.onload = function (){
             var $width = $('#width');
@@ -153,7 +171,6 @@
             });
 
             $('.des').change(function () {
-
                 var x = $('#dx').val();
                 var y = $('#dy').val();
                 if(x<0||x>=width) {
@@ -205,8 +222,8 @@
                 var pos = step[i];
                 for(var j=0;j<pos.length;j++) {
                     var person = $('#'+j);
-                    person.css('top', pos[j][0]*10-2);
-                    person.css('left', pos[j][1]*10-2);
+                    person.css('top', pos[j][0]*20-4);
+                    person.css('left', pos[j][1]*20-4);
                 }
                 i++;
                 if(i == step.length)
@@ -258,15 +275,13 @@
                             }
                             $dis.append(line);
                         }
-
                         ori = msg.ori;
                         step = msg.st;
-
                         for(var k=0;k<ori.length;k++) {
                             var person = $('<div class="person"></div>');
                             person.attr('id', k);
-                            person.css('top', ori[k][0]*10 - 2);
-                            person.css('left', ori[k][1]*10 - 2);
+                            person.css('top', ori[k][0]*20 - 4);
+                            person.css('left', ori[k][1]*20 - 4);
                             $dis.append(person);
                         }
                         anim();

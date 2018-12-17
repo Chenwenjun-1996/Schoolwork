@@ -15,18 +15,21 @@ class Person:
 
     def clearForce(self):
         self.fc = np.zeros(2)
+        self.dir = np.zeros(2)
 
     def force(self, f):
         self.fc += f
 
     def setDir(self, dire):
-        self.dir = dire
+        self.dir += dire
 
     def calculate(self):
-        self.curV += ((self.dir * self.desV - self.curV) / self.tao + self.fc / self.m)*self.dt
-
+        dl = np.linalg.norm(self.dir)
+        if dl == 0:
+            self.curV += ((np.random.rand(2) / 10 * self.desV - self.curV) / self.tao + self.fc / self.m) * self.dt
+        else:
+            self.curV += ((self.dir / dl * self.desV - self.curV) / self.tao + self.fc / self.m)*self.dt + np.random.normal(0, 1, size=2)/1000
         v = np.linalg.norm(self.curV)
-        # print(v)
         if v > self.maxV:
             self.curV = self.curV/v*self.maxV
         self.pos += self.curV * self.dt
