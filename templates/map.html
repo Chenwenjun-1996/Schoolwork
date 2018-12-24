@@ -74,13 +74,13 @@
         height: 300px;
     }
     .person {
-        width: 8px;
-        height: 8px;
-        border-radius: 4px;
+        width: 12px;
+        height: 12px;
+        border-radius: 6px;
         position: absolute;
         background-color: deepskyblue;
         z-index: 2;
-        transition: top 0.2s, left 0.2s;
+        transition: top 0.15s, left 0.15s;
     }
     .dline {
         height: 20px;
@@ -88,9 +88,8 @@
     .dcell {
         width: 20px;
         height: 20px;
-        background-color: #cccccc;
+        background-color: #ffffff;
         float: left;
-        opacity: 0.8;
     }
     .obs {
         background-color: #222222;
@@ -113,13 +112,13 @@
         <input type="number" value="10" id="height" class="size">
     </div>
         <div>
-        <label for="dy">终点横坐标:</label>
-            <input type="number" value="0" id="dy" class="des">
+        <label for="dx">终点横坐标:</label>
+            <input type="number" value="0" id="dx" class="des">
 
     </div>
     <div>
-        <label for="dx">终点纵坐标:</label>
-        <input type="number" value="0" id="dx" class="des">
+        <label for="dy">终点纵坐标:</label>
+        <input type="number" value="0" id="dy" class="des">
 
     </div>
     <div>
@@ -142,6 +141,8 @@
             var height = 10;
             var $map = $('#map');
             var $dis = $('#display');
+            var r = 6;
+
             var d;
             for(var i=0;i<width;i++) {
                 var $line = $('<div class="line"></div>');
@@ -160,9 +161,9 @@
                 width = parseInt($width.val());
                 height = parseInt($height.val());
                 $map.empty();
-                for(var i=0;i<width;i++) {
+                for(var i=0;i<height;i++) {
                     var $line = $('<div class="line"></div>');
-                    for (var j = 0; j < height; j++) {
+                    for (var j = 0; j < width; j++) {
                         var $cell = $('<div class="cell"></div>');
                         $line.append($cell);
                     }
@@ -176,18 +177,18 @@
                 if(x<0||x>=width) {
                     $('#dx').val(0);
                 }
-                if(y<0||y>=width) {
+                if(y<0||y>=height) {
                     $('#dy').val(0);
                 }
-                var li = $map.children().eq(x);
-                var ce = li.children().eq(y);
+                var li = $map.children().eq(y);
+                var ce = li.children().eq(x);
                 if(d!=undefined)
                     d.removeClass('dest');
                 d = ce;
                 ce.removeClass('block').addClass('dest');
             });
 
-            // $('#submit').click(function(){
+            // $('#submit').10click(function(){
             //     var map = '[[';
             //     for (var i = 0;i<width+1;i++) {
             //         map += '1,'
@@ -213,7 +214,7 @@
             //     map = JSON.parse(map);
             //     console.log(map);
             // })
-
+            var colors = ['#50514f', '#f25f5c', '#ffe066', '#247ba0', '#70c1b3', '#ff9f1c', '#00a8e8'];
             var ori;
             var step;
             function anim() {
@@ -222,13 +223,13 @@
                 var pos = step[i];
                 for(var j=0;j<pos.length;j++) {
                     var person = $('#'+j);
-                    person.css('top', pos[j][0]*20-4);
-                    person.css('left', pos[j][1]*20-4);
+                    person.css('top', pos[j][0]*20-r);
+                    person.css('left', pos[j][1]*20-r);
                 }
                 i++;
                 if(i == step.length)
                     clearInterval(fl);
-                }, 200);
+                }, 150);
             }
 
             $('#submit').click(function(){
@@ -280,8 +281,9 @@
                         for(var k=0;k<ori.length;k++) {
                             var person = $('<div class="person"></div>');
                             person.attr('id', k);
-                            person.css('top', ori[k][0]*20 - 4);
-                            person.css('left', ori[k][1]*20 - 4);
+                            person.css('top', ori[k][0]*20 - r);
+                            person.css('left', ori[k][1]*20 - r);
+                            person.css('background-color', colors[k%colors.length]);
                             $dis.append(person);
                         }
                         anim();

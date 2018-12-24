@@ -7,18 +7,23 @@ from component import person
 class ForceMap:
     def __init__(self, graph, width, height, x, y, num):
         self.crowd = []
-        self.width = width
-        self.height = height
+        self.width = height
+        self.height = width
         self.distMap = bfs.BFS(graph, width, height, x, y).dist
-        self.randomPos(width, height, num)
+        self.randomPos(height, width, num)
         #print(self.personMap())
         #np.set_printoptions(threshold=np.NaN)
         #print(self.distMap)
+        # self.A = 2000
+        # self.B = 0.08
+        # self.r = 0.4
+        # self.k = 120000
+        # self.K = 240000
         self.A = 2000
-        self.B = 0.08
-        self.r = 0.2
-        self.k = 120000
-        self.K = 240000
+        self.B = 0.02
+        self.r = 0.3
+        self.k = 480000
+        self.K = 960000
 
     def randomPos(self, width, height, num):  # 随机生成行人位置，行人不会在墙内，多个行人也不会出现在同一块中
         i = 0
@@ -27,7 +32,7 @@ class ForceMap:
             px = nr.randint(1, width - 1)
             py = nr.randint(1, height - 1)
             if self.distMap[px, py] != -1:
-                if (px+0.5, py+0.5) not in self.crowd:
+                if (px, py) not in tmp:
                     tmp.append((px, py))
                     self.crowd.append(person.Person(px+0.5, py+0.5))
                     i += 1
@@ -130,22 +135,4 @@ class ForceMap:
             self.crowd[i].force(fright)
             self.crowd[i].force(fleft)
             self.crowd[i].calculate()
-        #print(self.personMap())
 
-
-# graph = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0,
-#          0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, 0,
-#          0,
-#          0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0,
-#          0,
-#          0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, -1,
-#          -1,
-#          -1, -1, -1, -1, -1, -1, -1, -1, -1]
-
-# forceMap = ForceMap(graph, 12, 12, 10, 5, 10)
-# print(forceMap.obstacleMap())
-# for i in range(80):
-#     forceMap.step()
-# p1 = person.Person(1, 1)
-# p2 = person.Person(2, 2)
-# print(p2.pos - p1.pos)

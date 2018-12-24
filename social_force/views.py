@@ -12,14 +12,11 @@ def display(request):
     if request.method == 'POST':
         data = request.POST
         #        print(type(json.loads(data.get('graph'))))
-        print(data.get('width'))
-        print(data.get('height'))
         force = ForceMap(json.loads(data.get('graph')), int(data.get('width')), int(data.get('height')),
                          int(data.get('dx')),
                          int(data.get('dy')), int(data.get('people')))
         info = {}
         info['ori'] = force.personMap()
-        #print(force.personMap())
         info['st'] = []
         time = int(data.get('time'))
         if time > 500:

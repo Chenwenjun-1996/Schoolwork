@@ -8,9 +8,11 @@ class BFS:
         self.data = (ctypes.c_int * len(graph))(*graph)
         self.width = width
         self.height = height
+        #print(np.array(graph).reshape(int(height), int(width)))
         self.bfs = ctypes.cdll.LoadLibrary(os.path.join(os.getcwd(), 'bfs.so'))
         self.bfs.BFS(self.data, int(width), int(height), int(x), int(y))
-        self.dist = np.array(self.data).reshape(int(width), int(height))
+        self.dist = np.array(self.data).reshape(int(height), int(width))
+        #print(self.dist)
 
 
 
