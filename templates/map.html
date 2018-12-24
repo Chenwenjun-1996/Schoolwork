@@ -70,13 +70,11 @@
     #display {
         margin: 0 auto;
         position: relative;
-        width: 300px;
-        height: 300px;
     }
     .person {
-        width: 12px;
-        height: 12px;
-        border-radius: 6px;
+        /*width: 12px;*/
+        /*height: 12px;*/
+        border-radius: 50%;
         position: absolute;
         background-color: deepskyblue;
         z-index: 2;
@@ -281,8 +279,10 @@
                         for(var k=0;k<ori.length;k++) {
                             var person = $('<div class="person"></div>');
                             person.attr('id', k);
-                            person.css('top', ori[k][0]*20 - r);
-                            person.css('left', ori[k][1]*20 - r);
+                            person.css('top', ori[k][0]*20 - ori[k][2]*20);
+                            person.css('left', ori[k][1]*20 - ori[k][2]*20);
+                            person.css('width', ori[k][2]*40);
+                            person.css('height', ori[k][2]*40);
                             person.css('background-color', colors[k%colors.length]);
                             $dis.append(person);
                         }

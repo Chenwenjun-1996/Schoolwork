@@ -6,24 +6,24 @@ from component import person
 
 class ForceMap:
     def __init__(self, graph, width, height, x, y, num):
-        self.crowd = []
-        self.width = height
-        self.height = width
-        self.distMap = bfs.BFS(graph, width, height, x, y).dist
-        self.randomPos(height, width, num)
-        #print(self.personMap())
-        #np.set_printoptions(threshold=np.NaN)
-        #print(self.distMap)
-        # self.A = 2000
-        # self.B = 0.08
-        # self.r = 0.4
-        # self.k = 120000
-        # self.K = 240000
         self.A = 2000
         self.B = 0.02
         self.r = 0.3
         self.k = 480000
         self.K = 960000
+        self.crowd = []
+        self.width = height
+        self.height = width
+        self.distMap = bfs.BFS(graph, width, height, x, y).dist
+        self.randomPos(height, width, num)
+        # print(self.personMap())
+        # np.set_printoptions(threshold=np.NaN)
+        # print(self.distMap)
+        # self.A = 2000
+        # self.B = 0.08
+        # self.r = 0.4
+        # self.k = 120000
+        # self.K = 240000
 
     def randomPos(self, width, height, num):  # 随机生成行人位置，行人不会在墙内，多个行人也不会出现在同一块中
         i = 0
@@ -34,7 +34,7 @@ class ForceMap:
             if self.distMap[px, py] != -1:
                 if (px, py) not in tmp:
                     tmp.append((px, py))
-                    self.crowd.append(person.Person(px+0.5, py+0.5))
+                    self.crowd.append(person.Person(px + 0.5, py + 0.5, self.r))
                     i += 1
 
     def obstacleMap(self):  # 导出障碍地图格式字符串
@@ -49,7 +49,7 @@ class ForceMap:
     def personMap(self):  # 导出行人位置图字符串
         plist = []
         for p in self.crowd:
-            plist.append([round(p.pos[0], 5), round(p.pos[1], 5)])
+            plist.append([round(p.pos[0], 5), round(p.pos[1], 5), p.r])
         return plist
 
     def clear(self):  # 清空上一轮计算的力
@@ -100,9 +100,9 @@ class ForceMap:
                 return self.crowd[i].pos[1] - yi - 1
         return self.height
 
-    def wallForce(self, diw, niw, vi):
-        return (self.A * np.exp((self.r - diw) / self.B) + self.k * self.g(self.r - diw)) * niw - \
-               self.K * self.g(self.r - diw) * vi.dot(np.array(-niw[1], niw[0]))*np.array(-niw[1], niw[0])
+    def wallForce(self, diw, niw, vi, r):
+        return (self.A * np.exp((r - diw) / self.B) + self.k * self.g(r - diw)) * niw - \
+               self.K * self.g(r - diw) * vi.dot(np.array(-niw[1], niw[0])) * np.array(-niw[1], niw[0])
 
     def step(self):
         self.clear()  # 清空上一步的力
@@ -111,11 +111,11 @@ class ForceMap:
             for j in range(i + 1, len(self.crowd)):
                 Dij = self.crowd[i].pos - self.crowd[j].pos
                 dij = np.linalg.norm(Dij)  # 两行人间距离
-                rij = self.r * 2  # 两行人的半径之和
-                nij = Dij / (dij+0.00000001)
+                rij = self.crowd[i].r + self.crowd[j].r  # 两行人的半径之和
+                nij = Dij / (dij + 0.00000001)
                 tij = np.array([-nij[1], nij[0]])
                 force = (self.A * np.exp((rij - dij) / self.B) + self.k * self.g(rij - dij)) * nij + \
-                        self.K * self.g(rij - dij) * (self.crowd[j].curV - self.crowd[i].curV).dot(tij)*tij
+                        self.K * self.g(rij - dij) * (self.crowd[j].curV - self.crowd[i].curV).dot(tij) * tij
                 self.crowd[i].force(force)
                 self.crowd[j].force(-force)
 
@@ -126,13 +126,12 @@ class ForceMap:
             ddown = self.wallD(i, x, y)
             dright = self.wallR(i, x, y)
             dleft = self.wallL(i, x, y)
-            fup = self.wallForce(dup, np.array([0, -1]), self.crowd[i].curV)
-            fdown = self.wallForce(ddown, np.array([0, 1]), self.crowd[i].curV)
-            fright = self.wallForce(dright, np.array([-1, 0]), self.crowd[i].curV)
-            fleft = self.wallForce(dleft, np.array([1, 0]), self.crowd[i].curV)
+            fup = self.wallForce(dup, np.array([0, -1]), self.crowd[i].curV, self.crowd[i].r)
+            fdown = self.wallForce(ddown, np.array([0, 1]), self.crowd[i].curV, self.crowd[i].r)
+            fright = self.wallForce(dright, np.array([-1, 0]), self.crowd[i].curV, self.crowd[i].r)
+            fleft = self.wallForce(dleft, np.array([1, 0]), self.crowd[i].curV, self.crowd[i].r)
             self.crowd[i].force(fup)
             self.crowd[i].force(fdown)
             self.crowd[i].force(fright)
             self.crowd[i].force(fleft)
             self.crowd[i].calculate()
-

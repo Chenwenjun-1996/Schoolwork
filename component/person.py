@@ -2,7 +2,7 @@ import numpy as np
 
 
 class Person:
-    def __init__(self, x, y):
+    def __init__(self, x, y, r):
         self.pos = np.array([x, y], dtype=float)
         self.maxV = 0.4    # 最大速度
         self.desV = 0.3     # 期望速度
@@ -12,6 +12,7 @@ class Person:
         self.tao = 0.5  # 寻路算法部分常数
         self.m = 80.0   # 力部分常数
         self.dt = 0.5   # 时间间隔
+        self.r = r + np.random.uniform(-0.05, 0.05)
 
     def clearForce(self):
         self.fc = np.zeros(2)
